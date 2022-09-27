@@ -2,6 +2,8 @@
 #include <fstream>
 #include <conio.h>
 #include <windows.h>
+#include <string>
+#include <fstream>
 using namespace std;
 
 struct pipe
@@ -60,12 +62,48 @@ void MainMenu()
 	 cout << "Находится ли труба в ремонте:" << t.repair << endl;
 
 	 system("pause");
+
  }
 
-void Add_New_CS()
+ struct CS
+ {
+	 string name_CS;
+	 int number_of_workshop;
+	 float effiency;
+ };
+ 
+CS Add_New_CS()
 {
 	system("cls");
+	CS y;
 	cout << "Укажите параметры КС " << endl;
+	cout << "Название компрессорной станции:";
+	
+	//cin >> y.name_CS;
+
+	cin.clear();
+	cin.ignore();
+	getline(cin, y.name_CS);
+	cout << "Кол-во рабочих цехов:";
+	cin >> y.number_of_workshop;
+	cout << "Эффективность:";
+	cin >> y.effiency;
+
+	return y;
+
+
+	system("pause");
+	
+}
+
+void ShowNewCS(CS y)
+{
+	system("cls");
+	cout << "Название компрессорной станции:" << y.name_CS << endl;
+	
+	cout << "Кол-во рабочих цехов:" << y.number_of_workshop << endl;
+	cout << "Эффективность:" << y.effiency << endl;
+
 	system("pause");
 }
 
@@ -89,19 +127,45 @@ void Edit_cs()
 	cout << "Отредактируйте параметры КС" << endl;
 	system("pause");
 }
-void Save()
+
+
+
+void Save(const pipe & t, const CS & y)
 {
 	system("cls");
 	cout << "Сохранить изменения" << endl;
-	system("pause");
+	//system("pause");
+	ofstream fout_lr1;
+	//ofstream fout_nCS;
+	fout_lr1.open("My_LR1.txt", ios::out);
+	fout_lr1 <<t.diametr << endl <<  t.length << endl <<  t.repair << endl <<  y.name_CS << endl <<  y.effiency << endl <<  y.number_of_workshop;
+
+	fout_lr1.close();
+
+
+	
+
 
 }
 
-void load()
+void load(pipe & t, CS & y)
 {
 	system("cls");
 	cout << "загрузить все изменения" << endl;
-	system("pause");
+	//system("pause");
+	ifstream F;
+	F.open("My_LR1.txt", ios::in);
+	F >> t.diametr; 
+	F >> t.length; 
+	F >> t.repair;
+	//F >> y.name_CS; 
+	F.ignore();
+	getline(F,y.name_CS);
+	
+	F >> y.effiency;
+	F >> y.number_of_workshop;  
+	
+	F.close();
 }
 void exit()
 {
@@ -132,6 +196,7 @@ int main()
 	// ввожу переменную для отслеживания выхода из цикла 
 	bool exit = false;
 	pipe tb{};
+	CS st{};
 	while (!exit)
 	{
 		setlocale(LC_ALL, "Russian");
@@ -167,31 +232,40 @@ int main()
 				}
 				else if (activeMainMenu == 1)
 				{
-					Add_New_CS();
+					st = Add_New_CS();
+					ShowNewCS(st);
+					break;
 				}
 				else if (activeMainMenu == 2)
 				{
 					//View_All_objects();
-					ShowNewPipe(tb);
+					ShowNewPipe(tb); 
+					ShowNewCS(st);
+					break;
 				}
 				else if (activeMainMenu == 3)
 				{
 					//Edit_pipe();
 					ShowNewPipe(tb);
 					tb = Add_New_Pipe();
+					break;
 					
 				}
 				else if (activeMainMenu == 4)
 				{
-					Edit_cs();
+					//Edit_cs();
+					ShowNewCS(st);
+					st = Add_New_CS();
+					break;
 				}
 				else if (activeMainMenu == 5)
 				{
-					Save();
+					Save(tb, st);
+					
 				}
 				else if (activeMainMenu == 6)
 				{
-					load();
+					load( tb, st);
 				}
 				else if (activeMainMenu == 7)
 				{
