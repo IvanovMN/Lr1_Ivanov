@@ -1,10 +1,4 @@
-Truba
-
-234
+PIPE
 12
-1
-CS
-sdfghvcder
-52
-234
 123
+1

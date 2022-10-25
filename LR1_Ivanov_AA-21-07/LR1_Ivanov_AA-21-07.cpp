@@ -38,12 +38,53 @@ void MainMenu()
 }
 
 
+template <typename T, typename T1, typename T2>
+void check_input_info(T&input,T1&input1, T2&input2)
+{	
+	cout << "диаметр трубы: ";
+	
+		while ((cin >> input).fail() || (input <= 0) || (input >1470))
+		{
+			
+			cout << "невозможное значение переменной" << endl;
+			cin.clear();
+			cout << "диаметр трубы: ";
+			cin.ignore(10000, '\n');
+		}
+	
+	cout << "длина трубы: ";
+	
+		
+		while ((cin >> input1).fail() || (input1 <= 0))
+		{
+
+			cout << "невозможное значение переменной" << endl;
+			cin.clear();
+			cout << "длина трубы: ";
+			cin.ignore(10000, '\n');
+		}
+
+		cout << "текущее состояние трубы (0-поломана; 1-исправна): ";
+		while ((cin >> input2).fail() || (input2 < 0) || (input2 >1))
+		{
+
+			cout << "невозможное значение переменной" << endl;
+			cin.clear();
+			cout << "состояние трубы: ";
+			cin.ignore(10000, '\n');
+		}
+
+
+	
+
+}
+
 pipe Add_New_Pipe()
 {
 	system("cls");
 	pipe t;
 		cout << "Создайте трубу:" << endl;
-		for (;;) {
+		/*for (;;) {
 			cout << "Диаметр трубы:";
 			cin >> t.diametr;
 			if (cin.good()==true) {
@@ -76,8 +117,20 @@ pipe Add_New_Pipe()
 				cin.ignore(10000, '\n');
 			}
 
-		}
-		for (;;) {
+		}*/
+		/*cout << "диаметр трубы: ";
+		cin >> t.diametr;
+		while ((t.diametr == 0) || (t.diametr <0) || (t.diametr >1470))
+		{	
+			cout << "диаметр трубы: ";
+			
+			cin >> t.diametr;
+			cin.clear();
+			
+		}*/
+		
+		check_input_info(t.diametr,t.length, t.repair);
+		/*for (;;) {
 			cout << "Длина трубы:";
 			if (cin >> t.length) {
 
@@ -104,8 +157,9 @@ pipe Add_New_Pipe()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-		}
-		for (;;) {
+		}*/
+		//check_input_info(t.length);
+		/*for (;;) {
 			cout << "Состояние трубы (0 - поломана, 1 - исправна ):";
 			if (cin >> t.repair) {
 				//if (cin.good() == true) 
@@ -138,7 +192,7 @@ pipe Add_New_Pipe()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-		}
+		}*/
 	return t;
 	system("pause");
 }
@@ -379,13 +433,14 @@ void Save(const pipe& t, const CS& y)
 				if (t.diametr == 0)
 				{
 					cout << "net trubi" << endl;
+					system("pause");
 				}
 				else
 				{
 					if (fout_lr1.is_open() == true)
 					{
 						
-						fout_lr1 << "Truba" << endl << endl;;
+						fout_lr1 << "PIPE" << endl;
 						fout_lr1 << t.diametr << endl << t.length << endl << t.repair << endl;
 						
 					}
@@ -394,12 +449,13 @@ void Save(const pipe& t, const CS& y)
 				}
 				if (y.workshop == 0) {
 					cout << "cs net" << endl;
+					system("pause");
 				}
 				else
 				{
 					if (fout_lr1.is_open() == true)
 					{
-						fout_lr1 << "CS" << endl;
+						fout_lr1 << "STATION" << endl;
 						fout_lr1 << y.name_CS << endl << y.effiency << endl << y.workshop << endl << y.active_workshop << endl;
 					}
 					//fout_lr1.close();
@@ -455,14 +511,14 @@ void load(pipe& t, CS& y)
 				{
 
 
-					if (our_word == "Truba")
+					if (our_word == "PIPE")
 					{
 						F >> t.diametr;
 						F >> t.length;
 						F >> t.repair;
 					}
 					
-					if (our_word == "CS")
+					if (our_word == "STATION")
 					{
 						F.ignore();
 						getline(F, y.name_CS);
