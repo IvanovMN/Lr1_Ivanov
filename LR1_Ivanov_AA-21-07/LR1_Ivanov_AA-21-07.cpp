@@ -19,8 +19,8 @@ struct CS
 {
 	string name_CS;
 	int active_workshop;
-	int effiency ;
-	int workshop ;
+	int effiency;
+	int workshop;
 };
 
 void MainMenu()
@@ -38,168 +38,38 @@ void MainMenu()
 }
 
 
-template <typename T, typename T1, typename T2>
-void check_input_info(T&input,T1&input1, T2&input2)
-{	
-	cout << "диаметр трубы: ";
-	
-		while ((cin >> input).fail() || (input <= 0) || (input >1470))
-		{
-			
-			cout << "невозможное значение переменной" << endl;
-			cin.clear();
-			cout << "диаметр трубы: ";
-			cin.ignore(10000, '\n');
-		}
-	
-	cout << "длина трубы: ";
-	
+template <typename T>
+void check_input_info(T& input)
+{
+	while ((cin >> input).fail() || (input < 0))
+	{
+
+		cout << "невозможное значение переменной" << endl;
+		cin.clear();
 		
-		while ((cin >> input1).fail() || (input1 <= 0))
-		{
-
-			cout << "невозможное значение переменной" << endl;
-			cin.clear();
-			cout << "длина трубы: ";
-			cin.ignore(10000, '\n');
-		}
-
-		cout << "текущее состояние трубы (0-поломана; 1-исправна): ";
-		while ((cin >> input2).fail() || (input2 < 0) || (input2 >1))
-		{
-
-			cout << "невозможное значение переменной" << endl;
-			cin.clear();
-			cout << "состояние трубы: ";
-			cin.ignore(10000, '\n');
-		}
-
-
-	
-
+		cin.ignore(10000, '\n');
+	}
 }
 
 pipe Add_New_Pipe()
 {
 	system("cls");
 	pipe t;
-		cout << "Создайте трубу:" << endl;
-		/*for (;;) {
-			cout << "Диаметр трубы:";
-			cin >> t.diametr;
-			if (cin.good()==true) {
-
-				if (t.diametr == 0) {
-					cout << "ERROR!!! ВАША ТРУБА НЕ МОЖЕТ ИМЕТЬ ТАКОЙ ДИАМЕТР" << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-				}
-				else if (t.diametr < 0) {
-					cout << "ERROR!!! ВАША ТРУБА НЕ МОЖЕТ ИМЕТЬ ОТРИЦАТЕЛЬНЫЕ ЗНАЧЕНИЯ " << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-
-				}
-				else if (t.diametr > 1470) {
-					cout << "ERROR!!! ВАША ТРУБА ВЫХОДИТ ЗА РАМКИ ДОПУСТИМЫХ ЗНАЧЕНИЙ (ВЕРХНИЙ ПРЕДЕЛ ЗНАЧЕНИЙ 1470) " << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-				}
-				else {
-					cout << t.diametr << endl;
-					break;
-				}
-
-			}
-			else {
-				cout << "ERROR!!! ВВЕДЕНО НЕ ЧИСЛО" << endl;
-				cin.clear();
-				cin.ignore(10000, '\n');
-			}
-
-		}*/
-		/*cout << "диаметр трубы: ";
-		cin >> t.diametr;
-		while ((t.diametr == 0) || (t.diametr <0) || (t.diametr >1470))
-		{	
-			cout << "диаметр трубы: ";
-			
-			cin >> t.diametr;
-			cin.clear();
-			
-		}*/
-		
-		check_input_info(t.diametr,t.length, t.repair);
-		/*for (;;) {
-			cout << "Длина трубы:";
-			if (cin >> t.length) {
-
-				if (t.length == 0) {
-					cout << "ERROR!!! ВАША ТРУБА НЕ МОЖЕТ ИМЕТЬ ТАКУЮ ДЛИНУ" << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-				}
-				else if (t.length < 0) {
-					cout << "ERROR!!! ВАША ТРУБА НЕ МОЖЕТ ИМЕТЬ ОТРИЦАТЕЛЬНЫЕ ЗНАЧЕНИЯ ДЛИНЫ" << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-
-				}
-
-				else {
-					cout << t.length << endl;
-					break;
-				}
-
-			}
-			else {
-				cout << "ERROR!!! ВВЕДЕНО НЕ ЧИСЛО" << endl;
-				cin.clear();
-				cin.ignore(10000, '\n');
-			}
-		}*/
-		//check_input_info(t.length);
-		/*for (;;) {
-			cout << "Состояние трубы (0 - поломана, 1 - исправна ):";
-			if (cin >> t.repair) {
-				//if (cin.good() == true) 
-				if (t.repair == 0) {
-					cout << "Ваша труба поломана" << " " << t.repair << endl;
-					break;
-
-				}
-				else if (t.repair < 0) {
-					cout << "ERROR!!! ВАША ТРУБА НЕ МОЖЕТ ИМЕТЬ ОТРИЦАТЕЛЬНЫЕ ЗНАЧЕНИЯ ДЛЯ ОТОБРАЖЕНИЯ ЕЕ ТЕКУЩЕГО СОСТОЯНИЯ " << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-
-				}
-
-				else if (t.repair > 1) {
-					cout << "ERROR!!! СОСТОЯНИЕ ВАШЕЙ ТРУБЫ ДОЛЖНО ОЦЕНИВАТЬСЯ В РАМКАХ ДОПУСТИМЫХ ЗНАЧЕНИЙ ( 0 ИЛИ 1) " << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-				}
-
-				else {
-					cout << t.repair << endl;
-					break;
-				}
-
-			}
-			else {
-				cout << "ERROR!!! ВВЕДЕНО НЕ ЧИСЛО" << endl;
-				cin.clear();
-				cin.ignore(10000, '\n');
-			}
-		}*/
+	cout << "Создайте трубу:" << endl;
+	
+	cout << "диаметр трубы: ";
+	check_input_info(t.diametr);
+	cout << "длина трубы: ";
+	check_input_info(t.length);
+	cout << "текущее состояние трубы: ";
+	check_input_info(t.repair);
 	return t;
 	system("pause");
 }
 void ShowNewPipe(pipe& t)
 {
 	system("cls");
-	if (t.diametr > 0) 
+	if (t.diametr > 0)
 	{
 		cout << "труба уже создана" << endl << endl;
 		cout << "диаметр трубы: " << t.diametr << endl;
@@ -235,7 +105,6 @@ CS Add_New_CS()
 	cin >> ws;
 	getline(cin, y.name_CS);
 
-
 	for (;;) {
 		cout << "Число цехов: ";
 		if (cin >> y.workshop) {
@@ -252,7 +121,7 @@ CS Add_New_CS()
 				cin.ignore(10000, '\n');
 
 			}
-			
+
 			else {
 				cout << y.workshop << endl;
 				break;
@@ -283,7 +152,7 @@ CS Add_New_CS()
 				cin.clear();
 				cin.ignore(10000, '\n');
 			}
-			
+
 			else {
 				cout << y.active_workshop << endl;
 				break;
@@ -297,7 +166,7 @@ CS Add_New_CS()
 		}
 	}
 	cout << "Эффективность:";
-	y.effiency = int(y.active_workshop *100/ y.workshop) ;
+	y.effiency = int(y.active_workshop * 100 / y.workshop);
 	cout << y.effiency << "%" << endl;
 	system("pause");
 	return y;
@@ -338,17 +207,17 @@ pipe Edit_pipe(pipe& t)
 		{
 			t.repair = false;
 		}
-		
+
 	}
 	return t;
 	system("pause");
 
 }
 
-CS Edit_cs(CS&y)
+CS Edit_cs(CS& y)
 {
 	system("cls");
-	
+
 	if (y.workshop > 0)
 	{
 		cout << "Отредактируйте параметры" << endl;
@@ -365,7 +234,7 @@ CS Edit_cs(CS&y)
 					cout << "ERROR!!!  число рабочих цехов не может превосходить общее число цехов" << endl;
 					cin.clear();
 					cin.ignore(10000, '\n');
-					
+
 				}
 				/*else if (int(y.active_workshop) != y.active_workshop) {
 					cout << "ERROR!!! Вводимое число не может быть дробным " << endl;
@@ -420,65 +289,64 @@ bool wanna_rewrite()
 
 void Save(const pipe& t, const CS& y)
 {
-		system("cls");
-		cout << "Если файл еще не создан, то он автоматически создаcтся при нажатии на 1, с записанными параметрами" << endl << endl << "Иначе, создания не произойдет" << endl;
-		cout << endl << "Если файл уже имеется и вы хотите перезаписать его, нажмите 1, иначе просто любую клавишу: " << endl;
-		if (wanna_rewrite())
+	system("cls");
+	cout << "Если файл еще не создан, то он автоматически создаcтся при нажатии на 1, с записанными параметрами" << endl << endl << "Иначе, создания не произойдет" << endl;
+	cout << endl << "Если файл уже имеется и вы хотите перезаписать его, нажмите 1, иначе просто любую клавишу: " << endl;
+	if (wanna_rewrite())
+	{
+
+		ofstream fout_lr1;
+		fout_lr1.open("My_LR1.txt", ios::out);
+
+
+		if (t.diametr == 0)
 		{
-
-			ofstream fout_lr1;
-			fout_lr1.open("My_LR1.txt", ios::out);
-			
-			
-				if (t.diametr == 0)
-				{
-					cout << "net trubi" << endl;
-					system("pause");
-				}
-				else
-				{
-					if (fout_lr1.is_open() == true)
-					{
-						
-						fout_lr1 << "PIPE" << endl;
-						fout_lr1 << t.diametr << endl << t.length << endl << t.repair << endl;
-						
-					}
-					//fout_lr1.close();
-
-				}
-				if (y.workshop == 0) {
-					cout << "cs net" << endl;
-					system("pause");
-				}
-				else
-				{
-					if (fout_lr1.is_open() == true)
-					{
-						fout_lr1 << "STATION" << endl;
-						fout_lr1 << y.name_CS << endl << y.effiency << endl << y.workshop << endl << y.active_workshop << endl;
-					}
-					//fout_lr1.close();
-
-				}
-				/*if ((t.diametr > 0) && (y.workshop > 0))
-				{
-					if (fout_lr1.is_open() == true)
-					{
-						fout_lr1 << "truba" << endl;
-						fout_lr1 << t.diametr << endl << t.length << endl << t.repair << endl;
-						fout_lr1 << "cs" << endl;
-						fout_lr1 << y.name_CS << endl << y.effiency << endl << y.workshop << endl << y.active_workshop << endl;
-
-					}
-					
-				}*/
-		
-		fout_lr1.close();
-			
-			
-			
+			cout << "net trubi" << endl;
+			system("pause");
 		}
+		else
+		{
+			if (fout_lr1.is_open() == true)
+			{
+
+				fout_lr1 << "PIPE" << endl;
+				fout_lr1 << t.diametr << endl << t.length << endl << t.repair << endl;
+
+			}
+			//fout_lr1.close();
+
+		}
+		if (y.workshop == 0) {
+			cout << "cs net" << endl;
+			system("pause");
+		}
+		else
+		{
+			if (fout_lr1.is_open() == true)
+			{
+				fout_lr1 << "STATION" << endl;
+				fout_lr1 << y.name_CS << endl << y.effiency << endl << y.workshop << endl << y.active_workshop << endl;
+			}
+			//fout_lr1.close();
+
+		}
+		/*if ((t.diametr > 0) && (y.workshop > 0))
+		{
+			if (fout_lr1.is_open() == true)
+			{
+				fout_lr1 << "truba" << endl;
+				fout_lr1 << t.diametr << endl << t.length << endl << t.repair << endl;
+				fout_lr1 << "cs" << endl;
+				fout_lr1 << y.name_CS << endl << y.effiency << endl << y.workshop << endl << y.active_workshop << endl;
+			}
+
+		}*/
+
+		fout_lr1.close();
+
+
+
+	}
 
 }
 
@@ -505,38 +373,38 @@ void load(pipe& t, CS& y)
 
 			cout << "ERROR!!! no data in file " << endl;
 		}
-			
-			
-				while (F >> our_word)
-				{
 
 
-					if (our_word == "PIPE")
-					{
-						F >> t.diametr;
-						F >> t.length;
-						F >> t.repair;
-					}
-					
-					if (our_word == "STATION")
-					{
-						F.ignore();
-						getline(F, y.name_CS);
-						F >> y.workshop;
-						F >> y.effiency;
-						F >> y.active_workshop;
-					}
-					
-				}
-				
+		while (F >> our_word)
+		{
 
-			
-		
-		
+
+			if (our_word == "PIPE")
+			{
+				F >> t.diametr;
+				F >> t.length;
+				F >> t.repair;
+			}
+
+			if (our_word == "STATION")
+			{
+				F.ignore();
+				getline(F, y.name_CS);
+				F >> y.workshop;
+				F >> y.effiency;
+				F >> y.active_workshop;
+			}
+
+		}
+
+
+
+
+
 		F.close();
 		system("pause");
 	}
-	
+
 }
 
 
@@ -586,7 +454,7 @@ int main()
 			}
 			else if (activeMainMenu == 1)
 			{
-				
+
 				st = Add_New_CS();
 
 				break;
@@ -603,7 +471,7 @@ int main()
 				//Edit_pipe();
 				tb = Edit_pipe(tb);
 				ShowNewPipe(tb);
-				 
+
 				break;
 
 			}
@@ -612,7 +480,7 @@ int main()
 				//Edit_cs();
 				st = Edit_cs(st);
 				ShowNewCS(st);
-				
+
 				break;
 			}
 			else if (activeMainMenu == 5)
