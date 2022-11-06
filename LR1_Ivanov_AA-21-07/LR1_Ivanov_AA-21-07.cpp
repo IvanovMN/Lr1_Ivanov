@@ -4,12 +4,26 @@
 #include <windows.h>
 #include <string>
 #include <fstream>
+#include <unordered_map>
 
 using namespace std;
-
-
-struct pipe
+template <typename T>
+T GetCorrectNumber(T min, T max)
 {
+	T x;
+	while ((cin>>x).fail() || x<min || x > max)
+	{
+		cin.clear();
+		cin.ignore(10000, '\n');
+		cout << "ОШИБКА ВВОДА ДАННЫХ \n";
+	}
+	return x;
+}
+
+class pipe
+{
+public:
+	int id1;
 	float length;
 	float diametr;
 	bool repair;
@@ -38,10 +52,10 @@ void MainMenu()
 }
 
 
-template <typename T>
-void check_input_info(T& input)
+/*template <typename T>
+void check_input_info(T&input)
 {
-	while ((cin >> input).fail() || (input < 0))
+	while ((cin >> input).fail() || (input < 0) )
 	{
 
 		cout << "невозможное значение переменной" << endl;
@@ -49,9 +63,34 @@ void check_input_info(T& input)
 		
 		cin.ignore(10000, '\n');
 	}
+}*/
+istream& operator >> (istream& in, pipe& t)
+{
+	system("cls");
+	cout << "диаметр ";
+	t.diametr = GetCorrectNumber(0.1,20000.0);
+	cout << "длина ";
+	t.length = GetCorrectNumber(0.1, 20000.0);;
+	cout << "текущее состояние ";
+	t.repair = GetCorrectNumber(0,1);;
+	return in;
+
 }
 
-pipe Add_New_Pipe()
+ostream& operator << (ostream& out, pipe& t)
+{
+	system("cls");
+ out 
+	    << "id: " <<  t.id1 << endl
+		<< "Диаметр: " << t.diametr << endl
+		<< "Длина: " << t.length << endl
+		<< "Состояние трубы: " << t.repair << endl;
+	system("pause");
+	return out;
+	         
+}
+
+/*pipe Add_New_Pipe()
 {
 	system("cls");
 	pipe t;
@@ -65,7 +104,7 @@ pipe Add_New_Pipe()
 	check_input_info(t.repair);
 	return t;
 	system("pause");
-}
+}*/
 void ShowNewPipe(pipe& t)
 {
 	system("cls");
@@ -287,7 +326,7 @@ bool wanna_rewrite()
 
 }
 
-void Save(const pipe& t, const CS& y)
+void Save(ofstream&fout_lr1,  pipe&t, const CS & y)
 {
 	system("cls");
 	cout << "Если файл еще не создан, то он автоматически создаcтся при нажатии на 1, с записанными параметрами" << endl << endl << "Иначе, создания не произойдет" << endl;
@@ -295,8 +334,8 @@ void Save(const pipe& t, const CS& y)
 	if (wanna_rewrite())
 	{
 
-		ofstream fout_lr1;
-		fout_lr1.open("My_LR1.txt", ios::out);
+		/*ofstream fout_lr1;
+		fout_lr1.open("My_LR1.txt", ios::out);*/
 
 
 		if (t.diametr == 0)
@@ -310,6 +349,7 @@ void Save(const pipe& t, const CS& y)
 			{
 
 				fout_lr1 << "PIPE" << endl;
+				
 				fout_lr1 << t.diametr << endl << t.length << endl << t.repair << endl;
 
 			}
@@ -342,7 +382,7 @@ void Save(const pipe& t, const CS& y)
 
 		}*/
 
-		fout_lr1.close();
+		//fout_lr1.close();
 
 
 
@@ -350,12 +390,13 @@ void Save(const pipe& t, const CS& y)
 
 }
 
-void load(pipe& t, CS& y)
+void load(ifstream & F,  pipe & t,  CS &y)
 {
 	system("cls");
-	ifstream F;
+	//ifstream F;
+	
 	string our_word;
-	F.open("My_LR1.txt", ios::in);
+	//F.open("My_LR1.txt", ios::in);
 	cout << "При нажатии 1, все ваши данные перезапишутся" << endl << "на те, которые были в файле, если вы не хотите перезаписывать введенные вами данные, нажмите на любую другую кнопку: " << endl;
 	if (wanna_rewrite())
 	{
@@ -399,12 +440,11 @@ void load(pipe& t, CS& y)
 
 
 
-
-
-		F.close();
+		return;
+		//F.close();
 		system("pause");
 	}
-
+	
 }
 
 
@@ -414,6 +454,23 @@ void gotoxy(int x, int y)    // эта функция написана благ�
 	SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), plane);
 
 }
+
+
+/*bool IsNumberCorrect(double t1, double t2, double t3)
+{
+	return (t1, t2, t3 > 0) && (t1, t2, t3 < 10000);
+}*/
+
+
+
+
+
+/*pipe& SelectPipe(vector <pipe>& g)
+{
+	unsigned int id = GetCorrectNumber(1u, g.size() - 1);
+	return g[id-1];
+}*/
+
 
 int main()
 {
@@ -427,6 +484,7 @@ int main()
 	bool exit = false;
 	pipe tb{};
 	CS st{};
+	unordered_map <int,pipe>pipes;
 	while (!exit)
 	{
 		setlocale(LC_ALL, "Russian");
@@ -449,7 +507,16 @@ int main()
 			if (activeMainMenu == 0)
 			{
 				//ShowNewPipe(tb);
-				tb = Add_New_Pipe();
+				//tb = Add_New_Pipe();
+				//pipe tb;
+				//group.push_back(tb);
+				cin >> tb;
+				tb.id1 = pipes.size() + 1;
+				pipes.emplace(pipes.size()+1, tb);
+				for (auto& elm : pipes)
+				{
+					cout << elm.first << endl << elm.second; 
+				}
 				break;
 			}
 			else if (activeMainMenu == 1)
@@ -462,7 +529,14 @@ int main()
 			else if (activeMainMenu == 2)
 			{
 				//View_All_objects();
-				ShowNewPipe(tb);
+				//ShowNewPipe(tb);
+				//cout << SelectPipe(group)
+				
+				for (auto& elm : pipes)
+				{
+					cout << elm.first << endl<< elm.second;
+				}
+				
 				ShowNewCS(st);
 				break;
 			}
@@ -485,16 +559,38 @@ int main()
 			}
 			else if (activeMainMenu == 5)
 			{
-				Save(tb, st);
+				//Save(tb, st);
+				ofstream fout_lr1;
+				fout_lr1.open("My_LR1.txt", ios::out);
+				if (fout_lr1.is_open())
 
+				{
+					
+					fout_lr1 << pipes.size() << endl;
+					for (auto&elm : pipes)
+						Save(fout_lr1,tb,st);
+					fout_lr1.close();
+				}
+				break;
+				
 			}
 			else if (activeMainMenu == 6)
 			{
-				load(tb, st);
+				//load(tb, st);
+				ifstream F;
+				F.open("My_LR1.txt", ios::in);
+				if (F.is_open())
+				{
+					for (auto& elm : pipes)
+						load(F, tb, st);
+					F.close();
+				}
+				break;
+			
 			}
 			else if (activeMainMenu == 7)
 			{
-				Save(tb, st);
+				//Save(tb, st);
 				exit = true;
 			}
 			break;
