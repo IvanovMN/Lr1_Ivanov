@@ -6,38 +6,14 @@
 #include <fstream>
 #include <unordered_map>
 #include <vector>
+#include <algorithm>
+#include <iterator>
+#include "Pipe.h"
+#include "Stations.h"
+#include "utils.h"
 
 using namespace std;
-template <typename T>
-T GetCorrectNumber(T min, T max)
-{
-	T x;
-	while ((cin>>x).fail() || x<min || x > max)
-	{
-		cin.clear();
-		cin.ignore(10000, '\n');
-		cout << "ОШИБКА ВВОДА ДАННЫХ \n";
-	}
-	return x;
-}
 
-class pipe
-{
-public:
-	int id1;
-	float length;
-	float diametr;
-	bool repair;
-};
-
-struct CS
-{
-	int id2;
-	string name_CS;
-	int active_workshop;
-	int effiency;
-	int workshop;
-};
 
 void MainMenu()
 {
@@ -50,95 +26,85 @@ void MainMenu()
 		<< "(5) Редактировать КС: " << endl
 		<< "(6) Сохранить:" << endl
 		<< "(7) Загрузить:" << endl
-		<< "(0) Выход:" << endl;
-}
-
-
-/*template <typename T>
-void check_input_info(T&input)
-{
-	while ((cin >> input).fail() || (input < 0) )
-	{
-
-		cout << "невозможное значение переменной" << endl;
-		cin.clear();
+		<< "(0) Выход:" << endl
+		<< "(8) Find pipe by repair: " << endl
+		<< "(9) Delete pipe by id: " << endl
+		<< "(10) Find CS by name: " << endl
+		<< "(11) Find CS by inactive workshop" << endl
+		<< "(12) Find pipe by name";
 		
-		cin.ignore(10000, '\n');
-	}
-}*/
-istream& operator >> (istream& in, pipe& t)
+}
+
+Pipe& DeleteObjPipe(vector <Pipe>& pGroup)
 {
 	system("cls");
-	cout << "диаметр ";
-	t.diametr = GetCorrectNumber(0.1,20000.0);
-	cout << "длина ";
-	t.length = GetCorrectNumber(0.1, 20000.0);;
-	cout << "текущее состояние ";
-	t.repair = GetCorrectNumber(0,1);;
-	return in;
+	cout << "pls enter id: ";
+	unsigned long long int id = GetCorrectNumber(1ull, pGroup.size());
+	//return pGroup[id-1];
+	pGroup.erase(pGroup.begin() + (id - 1));
+	return pGroup[id - 1];
 
 }
 
-istream& operator >> (istream& in, CS& y)
+
+
+vector<int> FindPipebyName(const vector <Pipe>& pGroup)
 {
 	system("cls");
-	cout << "название компрессорной станции ";
+	string CheckNamePipe;
+	vector <int> res;
+	unsigned long long int i = 0;
+	cout << "pls write station name: ";
 	cin >> ws;
-	getline(cin, y.name_CS);
+	getline(cin, CheckNamePipe);
 
-	cout << "число цехов  ";
-	y.workshop = GetCorrectNumber(1.0, 20000.0);;
-	cout << "число рабочих цехов  ";
-	y.active_workshop = GetCorrectNumber(1, y.workshop);
-	cout << "эффективность  ";
-	y.effiency = GetCorrectNumber(0.0, 100.0);
-	return in;
-
+	for (auto& t : pGroup)
+	{
+		if (CheckNamePipe == t.name)
+			res.push_back(i);
+		i++;
+	}
+	return res;
 }
-
-
-ostream& operator << (ostream& out, CS& y)
+vector<int> FindCSbyName(const vector <Stations>& csGroup)
 {
 	system("cls");
-	out
-		<< "id: " << y.id2 << endl
-		<< "название: " << y.name_CS << endl
-		<< "число цехов: " << y.workshop << endl
-		<< "число рабочих цехов: " << y.active_workshop << endl
-		<< "эффективность: " << y.effiency << endl;
-	system("pause");
-	return out;
-	         
-}
-ostream& operator << (ostream& out, pipe& t)
-{
-	system("cls");
-	out
-		<< "id: " << t.id1 << endl
-		<< "Диаметр: " << t.diametr << endl
-		<< "Длина: " << t.length << endl
-		<< "Состояние трубы: " << t.repair << endl;
-	system("pause");
-	return out;
-}
-
-
-/*pipe Add_New_Pipe()
-{
-	system("cls");
-	pipe t;
-	cout << "Создайте трубу:" << endl;
+	string CheckNameCS;
+	vector <int> res;
+	unsigned long long int i = 0;
+	cout << "pls write station name: ";
+	cin >> ws;
+	getline(cin, CheckNameCS);
 	
-	cout << "диаметр трубы: ";
-	check_input_info(t.diametr);
-	cout << "длина трубы: ";
-	check_input_info(t.length);
-	cout << "текущее состояние трубы: ";
-	check_input_info(t.repair);
-	return t;
-	system("pause");
-}*/
-void ShowNewPipe(const vector <pipe>&pGroup)
+	for (auto& y : csGroup)
+	{
+		if (CheckNameCS == y.name_CS)
+			res.push_back(i);
+		i++;
+	}
+	return res;
+}
+
+vector<int> FindCSbyWorkshop(const vector <Stations>& csGroup)
+{
+	system("cls");
+	vector <int> res;
+	unsigned long long int i = 0;
+	int ukpd;
+	cout << "pls enter kpd: ";
+	cin >> ukpd;
+	for (auto& y : csGroup)
+	{
+		
+		if (ukpd >= (100-(y.active_workshop/y.workshop)*100));
+			res.push_back(i);
+		i++;
+	}
+	return res;
+}
+
+
+void ShowNewPipe(const vector <Pipe>&pGroup)
 {
 	unsigned long long int i;
 	system("cls");
@@ -147,6 +113,7 @@ void ShowNewPipe(const vector <pipe>&pGroup)
 		if (pGroup[i].diametr > 0)
 			{
 				cout << "труба уже создана" << endl << endl;
+				cout << "название трубы: " << pGroup[i].name << endl;
 				cout << "диаметр трубы: " << pGroup[i].diametr << endl;
 				cout << "длина трубы: " << pGroup[i].length << endl;
 				cout << "Состояние трубы (0 - поломана , 1 - исправна ):" << pGroup[i].repair << endl;
@@ -171,87 +138,7 @@ void ShowNewPipe(const vector <pipe>&pGroup)
 	
 	system("pause");
 }
-
-CS Add_New_CS()
-{
-	system("cls");
-	CS y;
-	cout << "Создайте компрессорную станцию" << endl;
-	cout << "Название компрессорной станции:";
-	cin.clear();
-	cin >> ws;
-	getline(cin, y.name_CS);
-
-	for (;;) {
-		cout << "Число цехов: ";
-		if (cin >> y.workshop) {
-
-			if (y.workshop == 0) {
-				cout << "Ваша КС не содержит цехов" << " " << y.workshop << endl;
-				cin.clear();
-				cin.ignore(10000, '\n');
-
-			}
-			else if (y.workshop < 0) {
-				cout << "ERROR!!! Ваша КС не содержит цехов, кроме того учитывайте, что их количество не может быть отрицательно  " << endl;
-				cin.clear();
-				cin.ignore(10000, '\n');
-
-			}
-
-			else {
-				cout << y.workshop << endl;
-				break;
-			}
-
-		}
-		else {
-			cout << "ERROR!!! ВВЕДЕНО НЕ ЧИСЛО" << endl;
-			cin.clear();
-			cin.ignore(10000, '\n');
-		}
-	}
-
-
-	for (;;) {
-		cout << "Число рабочих цехов: ";
-		if (cin >> y.active_workshop) {
-
-			if (y.active_workshop < 0) {
-				cout << "ERROR!!! ВАША кс не может иметь отрицательное кол-во рабочих цехов " << endl;
-				cin.clear();
-				cin.ignore(10000, '\n');
-
-			}
-
-			else if (y.active_workshop > y.workshop) {
-				cout << "ERROR!!!  число рабочих цехов не может превосходить общее число цехов" << endl;
-				cin.clear();
-				cin.ignore(10000, '\n');
-			}
-
-			else {
-				cout << y.active_workshop << endl;
-				break;
-			}
-
-		}
-		else {
-			cout << "ERROR!!! ВВЕДЕНО НЕ ЧИСЛО" << endl;
-			cin.clear();
-			cin.ignore(10000, '\n');
-		}
-	}
-	cout << "Эффективность:";
-	y.effiency = int(y.active_workshop * 100 / y.workshop);
-	cout << y.effiency << "%" << endl;
-	system("pause");
-	return y;
-	system("pause");
-
-}
-
-void ShowNewCS(const vector <CS>&csGroup)
+void ShowNewCS(const vector <Stations>&csGroup)
 {
 	unsigned long long int i;
 	system("cls");
@@ -273,30 +160,23 @@ void ShowNewCS(const vector <CS>&csGroup)
 	}system("pause");
 	
 }
-
-
-pipe Edit_pipe(pipe& t)
+void Edit_pipe(Pipe&t)
 {
 	system("cls");
 	cout << "Отредактируйте параметры трубы" << endl;
-	if (t.diametr > 0)
-	{
-		if (t.repair == 0)
-		{
-			t.repair = true;
-		}
-		else
-		{
-			t.repair = false;
-		}
-
-	}
-	return t;
+				if (t.repair == 0)
+				{
+					t.repair = true;
+				}
+				else
+				{
+					t.repair = false;
+				}
 	system("pause");
 
 }
 
-CS Edit_cs(CS& y)
+void Edit_cs(Stations& y)
 {
 	system("cls");
 
@@ -346,7 +226,7 @@ CS Edit_cs(CS& y)
 		cout << "Кс не создана" << endl;
 	}
 	system("pause");*/
-	return y;
+	system("pause");
 
 }
 
@@ -369,17 +249,13 @@ bool wanna_rewrite()
 
 }
 
-void Save(ofstream&fout_lr1, const vector <pipe>&pGroup, const vector <CS> & csGroup)
+void Save(ofstream&fout_lr1, const vector <Pipe>&pGroup, const vector <Stations> & csGroup)
 {
 	system("cls");
 	cout << "Если файл еще не создан, то он автоматически создаcтся при нажатии на 1, с записанными параметрами" << endl << endl << "Иначе, создания не произойдет" << endl;
 	cout << endl << "Если файл уже имеется и вы хотите перезаписать его, нажмите 1, иначе просто любую клавишу: " << endl;
-	//if (wanna_rewrite())
-	//{
-
-		/*ofstream fout_lr1;
-		fout_lr1.open("My_LR1.txt", ios::out);*/
-
+	if (wanna_rewrite())
+	{
 	for (int i = 0; i < pGroup.size(); i++)
 	{
 		if (pGroup[i].diametr == 0)
@@ -394,7 +270,7 @@ void Save(ofstream&fout_lr1, const vector <pipe>&pGroup, const vector <CS> & csG
 
 				fout_lr1 << "PIPE" << endl;
 
-				fout_lr1 << pGroup[i].diametr << endl << pGroup[i].length << endl << pGroup[i].repair << endl;
+				fout_lr1 <<pGroup[i].name << endl << pGroup[i].diametr << endl << pGroup[i].length << endl << pGroup[i].repair << endl;
 
 			}
 			//fout_lr1.close();
@@ -414,30 +290,17 @@ void Save(ofstream&fout_lr1, const vector <pipe>&pGroup, const vector <CS> & csG
 				fout_lr1 << "STATION" << endl;
 				fout_lr1 << csGroup[i].name_CS << endl << csGroup[i].effiency << endl << csGroup[i].workshop << endl << csGroup[i].active_workshop << endl;
 			}
-			//fout_lr1.close();
+			
 
 		}
-		/*if ((t.diametr > 0) && (y.workshop > 0))
-		{
-			if (fout_lr1.is_open() == true)
-			{
-				fout_lr1 << "truba" << endl;
-				fout_lr1 << t.diametr << endl << t.length << endl << t.repair << endl;
-				fout_lr1 << "cs" << endl;
-				fout_lr1 << y.name_CS << endl << y.effiency << endl << y.workshop << endl << y.active_workshop << endl;
-			}
-
-		}*/
-
-		//fout_lr1.close();
-
+		
 
 	}
-	//}
+	}
 
 }
 
-void load(ifstream & F, vector <pipe>& pGroup, vector <CS>& csGroup)
+void load(ifstream & F, vector <Pipe>& pGroup, vector <Stations>& csGroup)
 {
 	system("cls");
 	//ifstream F;
@@ -474,6 +337,7 @@ void load(ifstream & F, vector <pipe>& pGroup, vector <CS>& csGroup)
 			for (int i = 0; i < index1; i++)
 			{
 				F >> mark;
+				F >> pGroup[i].name;
 								F >> pGroup[i].diametr;
 								F >> pGroup[i].length;
 								F >> pGroup[i].repair;
@@ -518,28 +382,54 @@ void gotoxy(int x, int y)    // эта функция написана благ�
 
 
 
-pipe& SelectPipe(vector <pipe>& g)
+Pipe& SelectPipe(vector <Pipe>& pGroup)
 {
-	unsigned long long int id = GetCorrectNumber(1ull, g.size());
-	return g[id-1];
+	system("cls");
+	cout << "pls enter id: "; 
+	unsigned long long int id = GetCorrectNumber(1ull, pGroup.size());
+	return pGroup[id-1];
 }
+
+
+Stations& SelectCS(vector <Stations>& csGroup)
+{
+	system("cls");
+	cout << "pls enter id: ";
+	unsigned long long int id = GetCorrectNumber(1ull, csGroup.size());
+	return csGroup[id - 1];
+}
+
+vector<int> FindPipeByRepair(const vector <Pipe>& pGroup)
+{
+	vector <int> res;
+	unsigned long long int i = 0; 
+	for (auto& t : pGroup)
+	{
+		if (t.repair == true)
+			res.push_back(i);
+		i++;
+	}
+	return res;
+}
+
 
 
 int main()
 {
 	system("cls");
-	vector <pipe> pGroup;
-	vector <CS> csGroup;
-	const int Num_of_menu = 8;
+	vector <Pipe> pGroup; //= vector<pipe>{};
+	vector <Stations> csGroup = vector <Stations>{};
+	const int Num_of_menu = 13;
 	// выбранный пункт меню 
 	int activeMainMenu = 0;
 	// хранение нажатой клавишы  
 	int ch = 0;
 	// ввожу переменную для отслеживания выхода из цикла 
 	bool exit = false;
-	pipe tb{};
-	CS st{};
-	unordered_map <int,pipe>pipes;
+	Pipe tb{};
+	Stations st{};
+	int id = 0; 
+	unordered_map <int,Pipe>pipes;
 	while (!exit)
 	{
 		setlocale(LC_ALL, "Russian");
@@ -561,49 +451,37 @@ int main()
 			// далее выполняется переход в соответсвии с нажатым пунктом меню 
 			if (activeMainMenu == 0)
 			{
-				//ShowNewPipe(tb);
-				//tb = Add_New_Pipe();
-				//pipe tb;
-				//group.push_back(tb);
-				pipe tb;
+				id++;
+				Pipe tb;
+				tb.id1 = id;
 				cin >> tb;
 				pGroup.push_back(tb);
-				/*tb.id1 = pipes.size() + 1;
-				pipes.emplace(pipes.size()+1, tb);
-				for (auto& elm : pipes)
-				{
-					cout << elm.first << endl << elm.second; 
-				}*/
+
 				break;
 			}
 			else if (activeMainMenu == 1)
 			{
-				CS st;
+				id++;
+				Stations st;
+				st.id2 = id;
 				cin >> st;
 				csGroup.push_back(st);
-				//st = Add_New_CS();
+
 
 				break;
 			}
 			else if (activeMainMenu == 2)
 			{
-				//View_All_objects();
-				//ShowNewPipe(tb);
-				//cout << SelectPipe(group)
-				
-				/*for (auto& elm : pipes)
-				{
-					cout << elm.first << endl<< elm.second;
-				}*/
+
 				ShowNewPipe(pGroup);
 				ShowNewCS(csGroup);
-				
+
 				break;
 			}
 			else if (activeMainMenu == 3)
 			{
 				//Edit_pipe();
-				tb = Edit_pipe(tb);
+				Edit_pipe(SelectPipe(pGroup));
 				ShowNewPipe(pGroup);
 
 				break;
@@ -612,7 +490,7 @@ int main()
 			else if (activeMainMenu == 4)
 			{
 				//Edit_cs();
-				st = Edit_cs(st);
+				Edit_cs(SelectCS(csGroup));
 				ShowNewCS(csGroup);
 
 				break;
@@ -632,16 +510,16 @@ int main()
 					fout_lr1.close();
 				}*/
 					fout_lr1 << pGroup.size() << endl;
-					
-					
-				
+
+
+
 					fout_lr1 << csGroup.size() << endl;
-					
-						Save(fout_lr1, pGroup, csGroup);
-					
+
+					Save(fout_lr1, pGroup, csGroup);
+
 				}fout_lr1.close();
 				break;
-				
+
 			}
 			else if (activeMainMenu == 6)
 			{
@@ -650,7 +528,7 @@ int main()
 				F.open("My_LR1.txt", ios::in);
 				if (F.is_open())
 				{
-						load(F, pGroup, csGroup);
+					load(F, pGroup, csGroup);
 					F.close();
 				}
 				break;
@@ -659,6 +537,39 @@ int main()
 			{
 				//Save(tb, st);
 				exit = true;
+				break;
+			}
+			
+			else if (activeMainMenu == 8)
+			{
+				for (int i : FindPipeByRepair(pGroup))
+					cout << pGroup[i];
+				break;
+			}
+			
+			else if (activeMainMenu == 9)
+			{
+				DeleteObjPipe(pGroup);
+				ShowNewPipe(pGroup);
+				
+				break;
+			}
+			else if (activeMainMenu == 10)
+			{
+			for (int i : FindCSbyName(csGroup))
+				cout << csGroup[i];
+			break;
+			}
+			else if (activeMainMenu == 11)
+			{
+				for (int i : FindCSbyWorkshop(csGroup))
+					cout << csGroup[i];
+				break;
+			}
+			else if (activeMainMenu == 12)
+			{
+				for (int i : FindPipebyName(pGroup))
+				cout << pGroup[i];
 			}
 			break;
 		}
