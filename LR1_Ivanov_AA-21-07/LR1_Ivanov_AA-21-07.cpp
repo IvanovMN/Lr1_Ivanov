@@ -28,7 +28,7 @@ void MainMenu()
 		<< "(7) Загрузить:" << endl
 		<< "(0) Выход:" << endl
 		<< "(8) Find pipe by repair: " << endl
-		<< "(9) Delete pipe by id: " << endl
+		<< "(9) Delete pipe by id (no work): " << endl
 		<< "(10) Find CS by name: " << endl
 		<< "(11) Find CS by inactive workshop" << endl
 		<< "(12) Find pipe by name";
