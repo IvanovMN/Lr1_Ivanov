@@ -3,15 +3,18 @@
 #include <iostream>
 #include "utils.h"
 class Stations
-{
-	
+
+{	
 public:
-	int id2;
+	static int max_cs_id;
+	int cs_id;
 	std::string name_CS;
-	int active_workshop;
-	int effiency;
-	int workshop;
-	friend std::ostream& operator << (std::ostream& out, const Stations& y);
+	double active_workshop;
+	double effiency;
+	double workshop;
+	double k;
+	Stations();
+	friend std::ostream& operator << (std::ostream& out,   Stations& y);
 	friend std::istream& operator >> (std::istream& in, Stations& y);
 
 };

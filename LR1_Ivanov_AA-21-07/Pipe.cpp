@@ -1,13 +1,18 @@
 #include "Pipe.h"
 #include "utils.h"
+#include <iostream>
 using namespace std;
 
-
-ostream& operator << (ostream& out, const Pipe& t)
+int Pipe::max_pipe_id = 1;
+Pipe::Pipe()
+{
+	pipe_id = max_pipe_id++;
+}
+ostream& operator << (ostream& out, Pipe& t)
 {
 	system("cls");
 	out
-		<< "id: " << t.id1 << endl
+		<< "id: " << t.pipe_id << endl
 		<< "название: " << t.name << endl
 		<< "Диаметр: " << t.diametr << endl
 		<< "Длина: " << t.length << endl

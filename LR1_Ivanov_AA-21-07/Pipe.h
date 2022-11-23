@@ -1,16 +1,20 @@
 #pragma once
 #include <iostream>
 #include <string>
+#include "utils.h"
+using namespace std;
 class Pipe
 {
-	
 public:
-	std::string name;
-	int id1;
-	float length;
-	float diametr;
-	bool repair;
-	friend std::ostream& operator << (std::ostream& out, const Pipe& t);
+		string name;
+		int pipe_id;
+		double length;
+		double diametr;
+		bool repair;
+		static int max_pipe_id;
+
+	Pipe();
+	friend std::ostream& operator << (std::ostream& out, Pipe& t);
 	friend std::istream& operator >> (std::istream& in, Pipe& t);
 	
 };
