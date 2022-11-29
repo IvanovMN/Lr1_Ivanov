@@ -54,7 +54,8 @@ void MainMenu()
 		<< "(10) Find CS by name: " << endl
 		<< "(11) Find CS by inactive workshop" << endl
 		<< "(12) Find pipe by name" << endl
-		<< "(13) Delete CS by ID :";
+		<< "(13) Delete CS by ID :" << endl
+		<< "(14) пакетное редактирование:";
 		
 }
 
@@ -432,12 +433,17 @@ Stations& SelectCS(vector <Stations>& csGroup)
 
 
 
+
+
+
+
+
 int main()
 {
 	system("cls");
 	vector <Pipe> pGroup; //= vector<pipe>{};
 	vector <Stations> csGroup; // = vector <Stations>{};
-	const int Num_of_menu = 14;
+	const int Num_of_menu = 15;
 	// выбранный пункт меню 
 	int activeMainMenu = 0;
 	// хранение нажатой клавишы  
@@ -473,7 +479,7 @@ int main()
 			{
 				//id++;
 				Pipe tb;
-				cin >> tb;			
+				cin >> tb;
 				pipes.emplace(tb.getId(), tb);
 				//pGroup.push_back(tb);
 
@@ -481,13 +487,13 @@ int main()
 			}
 			else if (activeMainMenu == 1)
 			{
-				
+
 				Stations st;
 				//st.cs_id = id;
 				cin >> st;
 				//csGroup.push_back(st);
 				stations.emplace(st.cs_id, st);
-				
+
 
 				break;
 			}
@@ -496,21 +502,21 @@ int main()
 
 				/*ShowNewPipe(pipes);
 				ShowNewCS(stations);*/
-				
+
 				cout << "Параметры труб:" << endl;
-				
-				for (auto&it: pipes)
+
+				for (auto& it : pipes)
 				{
-					
+
 					cout << pipes[it.first];
 				}
-				
+
 				cout << "Параметры КС:" << endl;
 				for (auto& [id, Stations] : stations) {
 					cout << Stations;
 				}
 
-				
+
 				break;
 			}
 			else if (activeMainMenu == 3)
@@ -558,52 +564,52 @@ int main()
 				exit = true;
 				break;
 			}
-			
+
 			else if (activeMainMenu == 8)
 			{
 				bool repair = false;
-				
-				for (auto id: FindPipeByFilter(pipes, FindPipeByRepair, repair))
+
+				for (auto id : FindPipeByFilter(pipes, FindPipeByRepair, repair))
 				{
 					cout << pipes[id];
 				}
 				break;
 			}
-			
+
 			else if (activeMainMenu == 9)
 			{
 				DeleteObjPipe(pipes);
 				//ShowNewPipe(pipes);
-				
+
 				break;
 			}
 			else if (activeMainMenu == 10)
 			{
-			system("cls");
-			cout << "Pls enter name which CS you search: " << endl;
-			string name2;
-			cin >> ws;
-			getline(cin, name2);
+				system("cls");
+				cout << "Pls enter name which CS you search: " << endl;
+				string name2;
+				cin >> ws;
+				getline(cin, name2);
 
-			for (auto id : FindCSByFilter(stations, FindCsByName, name2))
-			{
-				cout << stations[id];
-			}
-			break;
+				for (auto id : FindCSByFilter(stations, FindCsByName, name2))
+				{
+					cout << stations[id];
+				}
+				break;
 			}
 			else if (activeMainMenu == 11)
 			{
-			system("cls");
-			
-			double percent;
-			percent = GetCorrectNumber(0.0, 100.0);
-			cout << "Ведите процент незадействованныз цехов (будут выведены значения меньшие либо равные этому)" << endl;
-			for (auto id : FindCSByFilter(stations, Non_working_CS, percent))
-			{
-				cout << stations[id];
-			}
+				system("cls");
+
+				double percent;
+				percent = GetCorrectNumber(0.0, 100.0);
+				cout << "Ведите процент незадействованныз цехов (будут выведены значения меньшие либо равные этому)" << endl;
+				for (auto id : FindCSByFilter(stations, Non_working_CS, percent))
+				{
+					cout << stations[id];
+				}
 				break;
-			}	
+			}
 			else if (activeMainMenu == 12)
 			{
 				/*for (int i : FindPipebyName(pGroup))
@@ -622,10 +628,25 @@ int main()
 			}
 			else if (activeMainMenu == 13)
 			{
-				DeleteObjStation(stations);
-			 }
-			 break;
+				DeleteObjStation(stations); break;
+			}
 
+
+			else if (activeMainMenu == 14)
+			{
+			system("cls");
+			cout << "Введите признак (0 или 1) по которому вы собираетесь редактировать все найденные трубы:" << endl;
+				bool repair=GetCorrectNumber(0, 1);
+
+				
+				for (auto id : FindPipeByFilter(pipes, FindPipeByRepair, repair))
+				{
+					cout << "Элементы до пакетного редактирования: " << endl;
+					cout << pipes[id];
+					Edit_pipe(pipes[id]);
+				}
+
+			}
 		}
 		// ограничение курсора
 		if (activeMainMenu < 0) activeMainMenu = 0;                                         //эта часть кода была взята с видео https://www.youtube.com/watch?v=PQyVWMaAJLg&ab_channel=%D0%9C%D0%B0%D0%BA%D1%81%D0%B8%D0%BC%D0%92%D0%BE%D0%BB%D0%BA%D0%BE%D0%B2
