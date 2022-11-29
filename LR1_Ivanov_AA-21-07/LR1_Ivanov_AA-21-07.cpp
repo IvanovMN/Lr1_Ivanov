@@ -34,6 +34,9 @@ void Tryanswer(T& input) {
 }
 
 
+
+
+
 void MainMenu()
 {
 	system("cls");
@@ -47,12 +50,22 @@ void MainMenu()
 		<< "(7) Загрузить:" << endl
 		<< "(0) Выход:" << endl
 		<< "(8) Find pipe by repair: " << endl
-		<< "(9) Delete pipe by id (no work): " << endl
+		<< "(9) Delete pipe by id : " << endl
 		<< "(10) Find CS by name: " << endl
 		<< "(11) Find CS by inactive workshop" << endl
-		<< "(12) Find pipe by name";
+		<< "(12) Find pipe by name" << endl
+		<< "(13) Delete CS by ID :";
 		
 }
+
+template <typename OB>
+OB& SelectOB(map<int, OB>& g)
+{
+	cout << "Введите ID элемента:";
+	unsigned long long int index = GetCorrectNumber(1ull, (g.size()));
+	return g[index];
+}
+
 
 void  DeleteObjPipe(map <int, Pipe>&pipes)
 {
@@ -115,119 +128,60 @@ void  DeleteObjStation(map <int, Stations>& stations)
 	}
 } 
  
-
-
-vector<int> FindPipebyName(const vector <Pipe>& pGroup)
+template<typename T>
+using Filter = bool(*)(const Pipe& t, T check);
+bool FindPipeByName(const Pipe& t, const string name1)
 {
-	system("cls");
-	string CheckNamePipe;
-	vector <int> res;
-	unsigned long long int i = 0;
-	cout << "pls write station name: ";
-	cin >> ws;
-	getline(cin, CheckNamePipe);
-
-	for (auto& t : pGroup)
-	{
-		if (CheckNamePipe == t.name)
-			res.push_back(i);
-		i++;
-	}
-	return res;
+	return t.name == name1;
 }
-vector<int> FindCSbyName(const vector <Stations>& csGroup)
+bool FindPipeByRepair(const Pipe& t, bool repair)
 {
-	system("cls");
-	string CheckNameCS;
+	return t.repair == repair;
+}
+
+template<typename T>
+vector<int> FindPipeByFilter(map<int, Pipe>& pipes, Filter<T> check, const T param)
+{
 	vector <int> res;
-	unsigned long long int i = 0;
-	cout << "pls write station name: ";
-	cin >> ws;
-	getline(cin, CheckNameCS);
-	
-	for (auto& y : csGroup)
+	for (auto& [id, p] : pipes)
 	{
-		if (CheckNameCS == y.name_CS)
-			res.push_back(i);
-		i++;
+		if (check(p, param))
+		{
+			res.push_back(p.pipe_id);
+		}
 	}
 	return res;
 }
 
-vector<int> FindCSbyWorkshop(const vector <Stations>& csGroup)
+template <typename T>
+using Filter1 = bool(*)(const Stations& y, T check);
+bool Non_working_CS(const Stations& y, double param) {
+	param ==(100 - ((y.workshop * 100) / y.active_workshop));
+	return y.k <= param;
+}
+bool FindCsByName(const Stations& y, const string name2)
 {
-	system("cls");
-	vector <int> res;
-	unsigned long long int i = 0;
-	int ukpd;
-	cout << "pls enter kpd: ";
-	cin >> ukpd;
-	for (auto& y : csGroup)
-	{
-		
-		if (ukpd >= (100-(y.active_workshop/y.workshop)*100));
-			res.push_back(i);
-		i++;
-	}
-	return res;
+	return y.name_CS == name2;
 }
 
 
-void ShowNewPipe(map <int, Pipe> pipes )
+template <typename T>
+vector<int> FindCSByFilter(map<int, Stations>& stations, Filter1<T> check, const T param)
 {
-	unsigned long long int i;
-	system("cls");
-	for (i = 0; i < pipes.size(); i++)
+	vector <int> res1;
+	for (auto& [id, c] : stations)
 	{
-		if (pipes[i].diametr > 0)
-			{
-				cout << "труба уже создана" << endl << endl;
-				cout << "название трубы: " << pipes[i].name << endl;
-				cout << "диаметр трубы: " << pipes[i].diametr << endl;
-				cout << "длина трубы: " << pipes[i].length << endl;
-				cout << "Состояние трубы (0 - поломана , 1 - исправна ):" << pipes[i].repair << endl;
-
-				if (pipes[i].repair == false)
-				{
-					cout << "truba v remonte" << endl;
-
-				}
-				else
-				{
-					cout << "truba v rabote" << endl;
-				}
-
-			}
-
-		else
+		if (check(c, param))
 		{
-				cout << "труба не создана" << endl;
+			res1.push_back(c.cs_id);
 		}
 	}
-	
+	return res1;
 }
-void ShowNewCS(map <int, Stations> stations)
-{
-	unsigned long long int i;
-	system("cls");
-	for (i = 0; i < stations.size(); i++)
-	{
-		if (stations[i].workshop > 0)
-		{
-			cout << "компрессорная станция  создана" << endl << endl;
-			cout << "Название компрессорной станции:" << stations[i].name_CS << endl;
-			cout << "Эффективность:" << stations[i].effiency << endl;
-			cout << "число цехов:" << stations[i].workshop << endl;
-			cout << "Кол-во рабочих цехов:" << stations[i].active_workshop << endl;
-		}
-		else
-		{
-			cout << "Станция не создана" << endl;
-		}
-		
-	}system("pause");
-	
-}
+
+
+
+
 void Edit_pipe(Pipe&t)
 {
 	system("cls");
@@ -284,9 +238,11 @@ void Edit_cs(Stations& y)
 				cin.ignore(10000, '\n');
 			}
 		}
-		cout << " Пересчитанная Эффективность:";
-		y.effiency = int(y.active_workshop * 100 / y.workshop);
-		cout << y.effiency << "%" << endl;
+		y.effiency = (y.active_workshop * 100 / y.workshop);
+		cout << "Показатель эффективности: " << " " << y.effiency << "%" << endl;
+		//процент незайдествованных цехов
+		y.k = 100 - y.effiency;
+		cout << "Процент незадействованных цехов: " << " " << y.k << "%" << endl;
 
 	}
 	/*else
@@ -332,17 +288,21 @@ void Save(map <int, Pipe>& pipes, map <int, Stations>& stations)
 	else
 	{
 		cout << "Your data successfully recordered" << endl;
-		fout_lr1 << pipes.size() << endl;
+		fout_lr1 << pipes.size() << endl << endl;
+		
 		for (auto& [id, Pipe] : pipes)
 		{
-			fout_lr1 << id << endl << Pipe.name << endl << Pipe.length << endl << Pipe.diametr << endl << Pipe.repair << endl;
+			fout_lr1 << id << endl << Pipe.name << endl << Pipe.length << endl << Pipe.diametr << endl << Pipe.repair << endl << endl;
 		}
-		fout_lr1 << stations.size() << endl;
+		fout_lr1 << Pipe::max_pipe_id<<endl<<endl;
+		
+		fout_lr1 << stations.size() << endl << endl;
+
 		for (auto& [id1, Stations] : stations)
 		{
-			fout_lr1 << id1 << endl << Stations.name_CS << endl << Stations.workshop << endl << Stations.active_workshop << endl << Stations.effiency << endl << Stations.k << endl;
+			fout_lr1 << id1 << endl << Stations.name_CS << endl << Stations.workshop << endl << Stations.active_workshop << endl << Stations.effiency << endl << Stations.k << endl << endl;
 		}
-
+		fout_lr1 << Stations::max_cs_id << endl;
 	}
 	fout_lr1.close();
 }
@@ -365,37 +325,39 @@ void load(map <int, Pipe>& pipes, map <int, Stations>& stations)
 	else
 	{
 		cout << "Data in file successfully loaded" << endl;
-		int value1;
+		int value1; //=pipes.size()
 		F >> value1;
+		
 		if (pipes.size() == 0)
 		{
-			for (auto& [pipe_id, Pipe] : stations)
+			for (auto& [pipe_id, Pipe] : pipes)
 			{
 				pipes.erase(pipe_id);
 			}
 		}
-		for (int j = 1; j <= value1; j++)
-		{
-			Pipe t;
-			int output_pipe_id = 0;
-			F >> output_pipe_id;
-			//F >> t.pipe_id;
-			cout << " Parametrs pipe №: " << output_pipe_id << endl;
-			F >> ws;
-			getline(F, t.name);
-			cout << "Название трубы: " << t.name << endl;
-			F >> t.length;
-			cout << "Длина трубы: " << t.length << endl;
-			F >> t.diametr;
-			cout << "Диаметр трубы: " << t.diametr << endl;
-			F >> t.repair;
-			cout << "Текущее состояние трубы: " << t.repair << endl;
-			pipes.emplace(t.pipe_id, t);
+		for (int i = 1; i <= value1; i++) {
+			Pipe tb;
+			//int id = 0;
+			//F >> id;
+			F >> tb.pipe_id;
+			cout << "Параметры трубы №" << tb.pipe_id << endl;
+			F.ignore();
+			getline(F, tb.name);
+			cout << "Название трубы:" << tb.name << endl;
+			F >> tb.length;
+			cout << "длина трубы:" << tb.length << endl;
+			F >> tb.diametr;
+			cout << "диаметр трубы:" << tb.diametr << endl;
+			F >> tb.repair;
+			cout << "состояние трубы:" << tb.repair << endl;
+			//tr.pipe_id = id;
+			pipes.emplace(tb.pipe_id, tb);
+			
 		}
+		F >> Pipe::max_pipe_id;
+		F >> value1;
 
 
-		int value2;
-		F >> value2;
 		if (stations.size() == 0)
 		{
 			for (auto& [cs_id, Stations] : stations)
@@ -403,7 +365,7 @@ void load(map <int, Pipe>& pipes, map <int, Stations>& stations)
 				stations.erase(cs_id);
 			}
 		}
-		for (int i = 1; i <= value2; i++)
+		for (int i = 1; i <= value1; i++)
 		{
 			Stations y;
 			int output_cs_id = 0;
@@ -422,7 +384,7 @@ void load(map <int, Pipe>& pipes, map <int, Stations>& stations)
 			cout << "Процент незадействованных цехов: " << y.k << endl;
 			stations.emplace(output_cs_id, y);
 		}
-	
+		F >> Stations::max_cs_id;
 	}
 	F.close();
 	
@@ -466,18 +428,7 @@ Stations& SelectCS(vector <Stations>& csGroup)
 	return csGroup[id - 1];
 }
 
-vector<int> FindPipeByRepair(const vector <Pipe>& pGroup)
-{
-	vector <int> res;
-	unsigned long long int i = 0; 
-	for (auto& t : pGroup)
-	{
-		if (t.repair == true)
-			res.push_back(i);
-		i++;
-	}
-	return res;
-}
+
 
 
 
@@ -486,19 +437,19 @@ int main()
 	system("cls");
 	vector <Pipe> pGroup; //= vector<pipe>{};
 	vector <Stations> csGroup; // = vector <Stations>{};
-	const int Num_of_menu = 13;
+	const int Num_of_menu = 14;
 	// выбранный пункт меню 
 	int activeMainMenu = 0;
 	// хранение нажатой клавишы  
 	int ch = 0;
 	// ввожу переменную для отслеживания выхода из цикла 
 	bool exit = false;
-	Pipe tb{};
-	Stations st{};
+	//Pipe tb{};
+	//Stations st{};
 	int id_pipe = 0; 
 	int id_cs = 0;
-	map <int,Pipe>pipes  = {};
-	map <int, Stations>stations = {};
+	map <int,Pipe>pipes;
+	map <int, Stations>stations ;
 	while (!exit)
 	{
 		setlocale(LC_ALL, "Russian");
@@ -522,13 +473,11 @@ int main()
 			{
 				//id++;
 				Pipe tb;
-				//tb.pipe_id = id;
-				cin >> tb;
-				pipes.emplace(tb.pipe_id, tb);
-				//id_pipe++;
+				cin >> tb;			
+				pipes.emplace(tb.getId(), tb);
 				//pGroup.push_back(tb);
 
-				break;
+				//break;
 			}
 			else if (activeMainMenu == 1)
 			{
@@ -547,12 +496,15 @@ int main()
 
 				/*ShowNewPipe(pipes);
 				ShowNewCS(stations);*/
-				system("cls");
+				
 				cout << "Параметры труб:" << endl;
-				for (auto& [id, Pipe] : pipes) {
-					cout << Pipe;
+				
+				for (auto&it: pipes)
+				{
+					
+					cout << pipes[it.first];
 				}
-
+				
 				cout << "Параметры КС:" << endl;
 				for (auto& [id, Stations] : stations) {
 					cout << Stations;
@@ -564,7 +516,8 @@ int main()
 			else if (activeMainMenu == 3)
 			{
 				//Edit_pipe();
-				Edit_pipe(SelectPipe(pGroup));
+				system("cls");
+				Edit_pipe(SelectOB(pipes));
 				//ShowNewPipe(pipes);
 
 				break;
@@ -573,7 +526,8 @@ int main()
 			else if (activeMainMenu == 4)
 			{
 				//Edit_cs();
-				Edit_cs(SelectCS(csGroup));
+				system("cls");
+				Edit_cs(SelectOB(stations));
 				//ShowNewCS(stations);
 
 				break;
@@ -590,6 +544,8 @@ int main()
 			else if (activeMainMenu == 6)
 			{
 				//load(tb, st);
+				pipes.clear();
+				stations.clear();
 				system("cls");
 				load(pipes, stations);
 				system("pause");
@@ -605,8 +561,12 @@ int main()
 			
 			else if (activeMainMenu == 8)
 			{
-				for (int i : FindPipeByRepair(pGroup))
-					cout << pGroup[i];
+				bool repair = false;
+				
+				for (auto id: FindPipeByFilter(pipes, FindPipeByRepair, repair))
+				{
+					cout << pipes[id];
+				}
 				break;
 			}
 			
@@ -619,22 +579,53 @@ int main()
 			}
 			else if (activeMainMenu == 10)
 			{
-			for (int i : FindCSbyName(csGroup))
-				cout << csGroup[i];
+			system("cls");
+			cout << "Pls enter name which CS you search: " << endl;
+			string name2;
+			cin >> ws;
+			getline(cin, name2);
+
+			for (auto id : FindCSByFilter(stations, FindCsByName, name2))
+			{
+				cout << stations[id];
+			}
 			break;
 			}
 			else if (activeMainMenu == 11)
 			{
-				for (int i : FindCSbyWorkshop(csGroup))
-					cout << csGroup[i];
-				break;
+			system("cls");
+			
+			double percent;
+			percent = GetCorrectNumber(0.0, 100.0);
+			cout << "Ведите процент незадействованныз цехов (будут выведены значения меньшие либо равные этому)" << endl;
+			for (auto id : FindCSByFilter(stations, Non_working_CS, percent))
+			{
+				cout << stations[id];
 			}
+				break;
+			}	
 			else if (activeMainMenu == 12)
 			{
-				for (int i : FindPipebyName(pGroup))
-				cout << pGroup[i];
+				/*for (int i : FindPipebyName(pGroup))
+				cout << pGroup[i];*/
+				system("cls");
+				cout << "Pls enter name which pipe you search: " << endl;
+				string name1;
+				cin >> ws;
+				getline(cin, name1);
+
+				for (auto id : FindPipeByFilter(pipes, FindPipeByName, name1))
+				{
+					cout << pipes[id];
+				}break;
+
 			}
-			break;
+			else if (activeMainMenu == 13)
+			{
+				DeleteObjStation(stations);
+			 }
+			 break;
+
 		}
 		// ограничение курсора
 		if (activeMainMenu < 0) activeMainMenu = 0;                                         //эта часть кода была взята с видео https://www.youtube.com/watch?v=PQyVWMaAJLg&ab_channel=%D0%9C%D0%B0%D0%BA%D1%81%D0%B8%D0%BC%D0%92%D0%BE%D0%BB%D0%BA%D0%BE%D0%B2

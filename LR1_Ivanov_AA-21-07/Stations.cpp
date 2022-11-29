@@ -2,10 +2,11 @@
 #include "utils.h"
 using namespace std;
 
-int Stations::max_cs_id = 1;
+int Stations::max_cs_id = 0;
 Stations::Stations()
 {
-	cs_id = max_cs_id++;
+	max_cs_id++;
+	cs_id = max_cs_id;
 }
 ostream& operator << (ostream& out,  Stations& y)
 {
