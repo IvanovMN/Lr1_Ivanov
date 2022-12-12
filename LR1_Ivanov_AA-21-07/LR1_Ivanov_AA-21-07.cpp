@@ -183,77 +183,77 @@ vector<int> FindCSByFilter(map<int, Stations>& stations, Filter1<T> check, const
 
 
 
-void Edit_pipe(Pipe&t)
-{
-	system("cls");
-	cout << "Отредактируйте параметры трубы" << endl;
-				if (t.repair == 0)
-				{
-					t.repair = true;
-				}
-				else
-				{
-					t.repair = false;
-				}
-	system("pause");
+//void Edit_pipe(Pipe&t)
+//{
+//	system("cls");
+//	cout << "Отредактируйте параметры трубы" << endl;
+//				if (t.repair == 0)
+//				{
+//					t.repair = true;
+//				}
+//				else
+//				{
+//					t.repair = false;
+//				}
+//	system("pause");
+//
+//}
 
-}
-
-void Edit_cs(Stations& y)
-{
-	system("cls");
-
-	if (y.workshop > 0)
-	{
-		cout << "Отредактируйте параметры" << endl;
-		for (;;) {
-			cout << "Число рабочих цехов: ";
-			if (cin >> y.active_workshop) {
-				if (y.active_workshop < 0) {
-					cout << "ERROR!!! ВАША кс не может иметь отрицательное кол-во рабочих цехов " << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-				}
-
-				else if (y.active_workshop > y.workshop) {
-					cout << "ERROR!!!  число рабочих цехов не может превосходить общее число цехов" << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-
-				}
-				/*else if (int(y.active_workshop) != y.active_workshop) {
-					cout << "ERROR!!! Вводимое число не может быть дробным " << endl;
-					cin.clear();
-					cin.ignore(10000, '\n');
-				}*/
-
-				else {
-					cout << y.active_workshop << endl;
-					break;
-				}
-
-			}
-			else {
-				cout << "ERROR!!! ВВЕДЕНО НЕ ЧИСЛО" << endl;
-				cin.clear();
-				cin.ignore(10000, '\n');
-			}
-		}
-		y.effiency = (y.active_workshop * 100 / y.workshop);
-		cout << "Показатель эффективности: " << " " << y.effiency << "%" << endl;
-		//процент незайдествованных цехов
-		y.k = 100 - y.effiency;
-		cout << "Процент незадействованных цехов: " << " " << y.k << "%" << endl;
-
-	}
-	/*else
-	{
-		cout << "Кс не создана" << endl;
-	}
-	system("pause");*/
-	system("pause");
-
-}
+//void Edit_cs(Stations& y)
+//{
+//	system("cls");
+//
+//	if (y.workshop > 0)
+//	{
+//		cout << "Отредактируйте параметры" << endl;
+//		for (;;) {
+//			cout << "Число рабочих цехов: ";
+//			if (cin >> y.active_workshop) {
+//				if (y.active_workshop < 0) {
+//					cout << "ERROR!!! ВАША кс не может иметь отрицательное кол-во рабочих цехов " << endl;
+//					cin.clear();
+//					cin.ignore(10000, '\n');
+//				}
+//
+//				else if (y.active_workshop > y.workshop) {
+//					cout << "ERROR!!!  число рабочих цехов не может превосходить общее число цехов" << endl;
+//					cin.clear();
+//					cin.ignore(10000, '\n');
+//
+//				}
+//				/*else if (int(y.active_workshop) != y.active_workshop) {
+//					cout << "ERROR!!! Вводимое число не может быть дробным " << endl;
+//					cin.clear();
+//					cin.ignore(10000, '\n');
+//				}*/
+//
+//				else {
+//					cout << y.active_workshop << endl;
+//					break;
+//				}
+//
+//			}
+//			else {
+//				cout << "ERROR!!! ВВЕДЕНО НЕ ЧИСЛО" << endl;
+//				cin.clear();
+//				cin.ignore(10000, '\n');
+//			}
+//		}
+//		y.effiency = (y.active_workshop * 100 / y.workshop);
+//		cout << "Показатель эффективности: " << " " << y.effiency << "%" << endl;
+//		//процент незайдествованных цехов
+//		y.k = 100 - y.effiency;
+//		cout << "Процент незадействованных цехов: " << " " << y.k << "%" << endl;
+//
+//	}
+//	/*else
+//	{
+//		cout << "Кс не создана" << endl;
+//	}
+//	system("pause");*/
+//	system("pause");
+//
+//}
 
 bool wanna_rewrite()
 {
@@ -369,9 +369,10 @@ void load(map <int, Pipe>& pipes, map <int, Stations>& stations)
 		for (int i = 1; i <= value1; i++)
 		{
 			Stations y;
-			int output_cs_id = 0;
-			F >> output_cs_id;
-			cout << " Parametrs CS №: " << output_cs_id << endl;
+			//int output_cs_id = 0;
+			//F >> output_cs_id;
+			F >> y.cs_id;
+			cout << " Parametrs CS №: " << y.cs_id << endl;
 			F >> ws;
 			getline(F, y.name_CS);
 			cout << "название : " << y.name_CS << endl;
@@ -383,7 +384,7 @@ void load(map <int, Pipe>& pipes, map <int, Stations>& stations)
 			cout << "Показатель эффективности рабочих цехов: " << y.effiency << endl;
 			F >> y.k;
 			cout << "Процент незадействованных цехов: " << y.k << endl;
-			stations.emplace(output_cs_id, y);
+			stations.emplace(y.cs_id, y);
 		}
 		F >> Stations::max_cs_id;
 	}

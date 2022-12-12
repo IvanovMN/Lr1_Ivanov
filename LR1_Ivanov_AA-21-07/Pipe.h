@@ -21,6 +21,7 @@ public:
 	//void Edit_pipe();
 	friend std::ostream& operator << (std::ostream& out, Pipe& t);
 	friend std::istream& operator >> (std::istream& in, Pipe& t);
+	friend void Edit_pipe(Pipe&t); 
 	
 };
 

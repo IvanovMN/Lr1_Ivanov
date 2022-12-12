@@ -69,3 +69,58 @@ istream& operator >> (istream& in, Stations& y)
 
 }
 
+void Edit_cs(Stations& y)
+{
+	system("cls");
+
+	if (y.workshop > 0)
+	{
+		cout << "Отредактируйте параметры" << endl;
+		for (;;) {
+			cout << "Число рабочих цехов: ";
+			if (cin >> y.active_workshop) {
+				if (y.active_workshop < 0) {
+					cout << "ERROR!!! ВАША кс не может иметь отрицательное кол-во рабочих цехов " << endl;
+					cin.clear();
+					cin.ignore(10000, '\n');
+				}
+
+				else if (y.active_workshop > y.workshop) {
+					cout << "ERROR!!!  число рабочих цехов не может превосходить общее число цехов" << endl;
+					cin.clear();
+					cin.ignore(10000, '\n');
+
+				}
+				/*else if (int(y.active_workshop) != y.active_workshop) {
+					cout << "ERROR!!! Вводимое число не может быть дробным " << endl;
+					cin.clear();
+					cin.ignore(10000, '\n');
+				}*/
+
+				else {
+					cout << y.active_workshop << endl;
+					break;
+				}
+
+			}
+			else {
+				cout << "ERROR!!! ВВЕДЕНО НЕ ЧИСЛО" << endl;
+				cin.clear();
+				cin.ignore(10000, '\n');
+			}
+		}
+		y.effiency = (y.active_workshop * 100 / y.workshop);
+		cout << "Показатель эффективности: " << " " << y.effiency << "%" << endl;
+		//процент незайдествованных цехов
+		y.k = 100 - y.effiency;
+		cout << "Процент незадействованных цехов: " << " " << y.k << "%" << endl;
+
+	}
+	/*else
+	{
+		cout << "Кс не создана" << endl;
+	}
+	system("pause");*/
+	system("pause");
+
+}

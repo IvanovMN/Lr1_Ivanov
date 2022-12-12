@@ -4,17 +4,17 @@
 using namespace std;
 
 
-//void Pipe::Edit_pipe()
-//{
-//	if (repair == 0)
-//		{
-//			repair = true;
-//		}
-//	else
-//		{
-//			repair = false;
-//		}
-//}
+void Edit_pipe(Pipe&t)
+{
+	if (t.repair == 0)
+		{
+			t.repair = true;
+		}
+	else
+		{
+			t.repair = false;
+		}
+}
 
 int Pipe::max_pipe_id=0;
 Pipe::Pipe()
