@@ -128,11 +128,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="GRAPH.cpp" />
     <ClCompile Include="LR1_Ivanov_AA-21-07.cpp" />
     <ClCompile Include="Pipe.cpp" />
     <ClCompile Include="Stations.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="GRAPH.h" />
     <ClInclude Include="Pipe.h" />
     <ClInclude Include="Stations.h" />
     <ClInclude Include="utils.h" />

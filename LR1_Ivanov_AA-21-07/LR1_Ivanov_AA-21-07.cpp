@@ -20,6 +20,10 @@
 #include "utils.h"
 #include <stdio.h>
 #include <cstdlib>
+
+#include <unordered_map>
+#include "GRAPH.h"
+
 using namespace std;
 
 
@@ -34,7 +38,107 @@ void Tryanswer(T& input) {
 }
 
 
+bool checkdiameter(const Pipe& t, int param)
+{
+	return t.diametr == param;
+}
+bool noUSED(unordered_map<int, GRAPH>& gr, int par)
+{
+	auto prov = gr.find(par);
+	if (prov != gr.end())
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
 
+}
+
+void getend(unordered_map<int, GRAPH> gr, vector<int>& otv)
+{
+	vector<int> prov1;
+	if (gr.size() != 0)
+	{
+		unordered_map<int, GRAPH> dr;
+		dr = gr;
+		for (auto& [k, v] : dr)
+		{
+			bool exist2 = false;
+			for (auto& [k2, v2] : dr)
+			{
+				if (v.idvh == v2.idvih)
+				{
+					exist2 = true;
+				}
+			}
+			if (!exist2)
+			{
+				for (int i = 0; i < gr.size(); i++)
+				{
+					prov1.push_back(v.idvh);
+
+				}
+			}
+		}
+	}
+	else
+	{
+		return;
+	}
+	for (int i = 0; i < prov1.size(); i++)
+		otv.push_back(prov1[i]);
+}
+
+void tosort2(unordered_map<int, GRAPH> gr, vector<int>& otv)
+{
+	vector<int> prov1;
+	if (gr.size() != 0)
+	{
+		unordered_map<int, GRAPH> dr;
+		dr = gr;
+		for (auto& [k, v] : dr)
+		{
+			int prov = 0;
+			bool exist = false;
+			bool exist2 = false;
+			for (auto& [k2, v2] : dr)
+			{
+				if (v.idvih == v2.idvh)
+				{
+					exist = true;
+				}
+				else
+				{
+					prov = v.idvih;
+				}
+				if (v.idvh == v2.idvih)
+				{
+					exist2 = true;
+				}
+			}
+			if (!exist)
+			{
+				for (auto& [k1, v2] : dr)
+				{
+					if (v2.idvih == prov)
+					{
+						gr.erase(k1);
+					}
+				}
+				otv.push_back(v.idvih);
+				break;
+			}
+		}
+		tosort2(gr, otv);
+	}
+	else
+	{
+		return;
+	}
+	getend(gr, otv);
+}
 
 
 void MainMenu()
@@ -55,7 +159,12 @@ void MainMenu()
 		<< "(11) Find CS by inactive workshop" << endl
 		<< "(12) Find pipe by name" << endl
 		<< "(13) Delete CS by ID :" << endl
-		<< "(14) пакетное редактирование:";
+		<< "(14) пакетное редактирование:" << endl
+		<< "(15) сделать граф : " << endl
+		<< "(16) вывести граф: " << endl
+		<< "(17) сохранить граф:" << endl
+		<< "(18) загрузить граф:" << endl
+		<< "(19) Удалить граф:";
 		
 }
 
@@ -180,6 +289,180 @@ vector<int> FindCSByFilter(map<int, Stations>& stations, Filter1<T> check, const
 	return res1;
 }
 
+template <typename T>
+int FindPipe(const map<int, Pipe>& p, Filter <T> check, const T param, unordered_map <int, GRAPH>& gr)
+{
+	for (auto& [k, v] : p)
+	{
+		if (check(v, param) && FindPipeByRepair(v, true) && noUSED(gr, k))
+		{
+			return k;
+			break;
+		}
+	}
+	return -1;
+}
+
+
+
+void deleteGraphVertex(unordered_map<int, GRAPH>& gr, int iddelete)
+{
+	unordered_map<int, GRAPH> gp;
+	gp = gr;
+	for (auto& [k, v] : gp)
+	{
+		if ((v.idvh == iddelete) || (v.idvih == iddelete))
+			gr.erase(k);
+	}
+}
+
+void Deleteobject(map <int, Pipe>& t, unsigned long long int idpmax, map<int, Stations>& g, unsigned long long int idCSmax, unordered_map<int, GRAPH>& gr)
+{
+	bool ob;
+	cout << "Выберете какой тип объекта будет удален (1-труба,0-станция)\n";
+	GetCorrectNumbers(ob);
+	if (ob == true)
+	{
+		if (t.size() != 0)
+		{
+			cout << "Введите номер объекта от :0 до: " << idpmax - 1 << "\n";
+			int iddelete = GetCorrectNumber(0ull, idpmax - 1);
+			auto it = t.find(iddelete);
+			if (it != t.end())
+			{
+				t.erase(iddelete);
+				if (gr.size() != 0)
+				{
+					gr.erase(iddelete);
+				}
+				cout << "Объект удалён\n";
+			}
+			else
+			{
+				cout << "Объект уже был удален\n";
+			}
+		}
+		else
+		{
+			cout << "Нет объектов трубы\n";
+		}
+	}
+	if (ob == false)
+	{
+		if (g.size() != 0)
+		{
+			cout << "Введите номер объекта от :0 до: " << idCSmax - 1 << "\n";
+			int iddelete = GetCorrectNumber(0ull, idCSmax - 1);
+			auto it = g.find(iddelete);
+			if (it != g.end())
+			{
+				g.erase(iddelete);
+				if (gr.size() != 0)
+				{
+					deleteGraphVertex(gr, iddelete);
+				}
+				cout << "Объект удалён\n";
+			}
+			else
+			{
+				cout << "Объект уже был удален\n";
+			}
+		}
+		else
+		{
+			cout << "Нет объектов станции\n";
+		}
+	}
+	system("pause");
+}
+
+
+
+void saveGRAPH(unordered_map<int, GRAPH> gr)
+{
+	system("cls");
+	ofstream f_inf;
+	f_inf.open("LR1.txt", ios::out);
+	f_inf << gr.size() << '\n';
+	for (const auto& [k, v] : gr)
+	{
+		f_inf << k << endl;
+		f_inf << v << endl;
+	}
+	f_inf.close();
+	cout << "Данные сохранены в файл" << "\n";
+	system("pause");
+}
+void readGraphInfile(unordered_map<int, GRAPH>& gr)
+{
+	ifstream f_inf;
+	f_inf.open("LR1.txt", ios::in);
+	int kol;
+	f_inf >> kol;
+	for (int i = 0; i < kol; i++)
+	{
+		int key;
+		f_inf >> key;
+		f_inf >> gr[key];
+		
+		
+	}
+	f_inf.close();
+}
+
+int makepipe(map <int, Pipe>& pipes, int& idP)
+{
+	Pipe t;
+	cout << "Создайте трубу с нужным диаметром\n";
+	cin >> t;
+	pipes.emplace(idP, t);
+	return idP;
+}
+
+void makeGRAPH(unordered_map <int, GRAPH>& graph, map<int, Pipe>& pipes, const map<int, Stations>& stations, int& idP)
+{
+	vector <int> neighbours;
+	unordered_map <int, vector<int>> to_sort;
+	int idout;
+	cout << "Ввелите id выхода\n";
+	int kol = stations.size();
+	idout = GetCorrectNumber(0, kol);
+	int idin;
+	cout << "Введите id входа\n";
+	idin = CorrectVertex(0, kol, idout);
+	int diametr;
+	cout << "Введите диаметр \n";
+	cin >> diametr;
+	int idpipe;
+	idpipe = FindPipe(pipes, checkdiameter, diametr, graph);
+	GRAPH gr;
+	gr.idvh = idin;
+	gr.idvih = idout;
+	neighbours.push_back(gr.idvh);
+	to_sort.emplace(gr.idvih, neighbours);
+	if (idpipe != -1)
+	{
+		graph.emplace(idpipe, gr);
+	}
+	else
+	{
+		cout << "Труба не найдена. Создайте трубу\n";
+		graph.emplace(makepipe(pipes, idP), gr);
+		idP++;
+	}
+	system("pause");
+}
+
+void printGRAPH(unordered_map <int, GRAPH> gr)
+{
+	system("cls");
+	for (auto& [k, v] : gr)
+	{
+		cout << k << " ";
+		cout << gr[k];
+	}
+	system("pause");
+}
 
 
 
@@ -442,9 +725,12 @@ Stations& SelectCS(vector <Stations>& csGroup)
 int main()
 {
 	system("cls");
+	unordered_map<int, GRAPH> graph;
+	int idP = 0;
+	int idCS = 0;
 	vector <Pipe> pGroup; //= vector<pipe>{};
 	vector <Stations> csGroup; // = vector <Stations>{};
-	const int Num_of_menu = 15;
+	const int Num_of_menu = 21;
 	// выбранный пункт меню 
 	int activeMainMenu = 0;
 	// хранение нажатой клавишы  
@@ -647,6 +933,34 @@ int main()
 					Edit_pipe(pipes[id]);
 				}
 
+			}
+			else if (activeMainMenu == 15)
+			{
+				system("cls");
+				makeGRAPH(graph, pipes, stations, idP);
+				
+				break;
+			}
+			else if (activeMainMenu == 16)
+			{
+				
+				printGRAPH(graph);
+				break;
+			}
+			else if (activeMainMenu == 17)
+			{
+				saveGRAPH(graph);
+				break;
+			}
+			else if (activeMainMenu == 18)
+			{
+				readGraphInfile(graph);
+				break;
+			}
+			else if (activeMainMenu == 19)
+			{
+				Deleteobject(pipes, idP, stations, idCS, graph);
+				break;
 			}
 		}
 		// ограничение курсора
